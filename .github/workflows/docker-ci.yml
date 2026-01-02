@@ -28,3 +28,4 @@ jobs:
           context: .
           push: true
           tags: shagun1/web_weather:latest
+# this is the module of ci which you can create through chatgpt
