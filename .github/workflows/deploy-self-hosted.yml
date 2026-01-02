@@ -32,8 +32,8 @@ jobs:
       - name: Free port 5000 (safety step)
         shell: powershell
         run: |
-          $pid = (netstat -ano | Select-String ":5000" | ForEach-Object { ($_ -split '\s+')[-1] } | Select-Object -First 1)
-          if ($pid) { taskkill /PID $pid /F }
+          $portPid = (netstat -ano | Select-String ":5000" | ForEach-Object { ($_ -split '\s+')[-1] } | Select-Object -First 1)
+          if ($portPid) { taskkill /PID $portPid /F }
 
       - name: Run new container
         shell: powershell
