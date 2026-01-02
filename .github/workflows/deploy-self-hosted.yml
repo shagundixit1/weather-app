@@ -1,9 +1,10 @@
 name: CD - Deploy using Self Hosted Runner
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["CI - Build & Push Docker Image"]
+    types:
+      - completed
 
 jobs:
   deploy:
@@ -13,16 +14,25 @@ jobs:
       - name: Pull latest Docker image
         run: docker pull shagun1/web_weather:latest
 
-      - name: Stop old container
-        run: docker stop weather-app || true
+      - name: Stop old container if exists
+        shell: powershell
+        run: |
+          if (docker ps -a --format "{{.Names}}" | Select-String "weather-app") {
+            docker stop weather-app
+          }
 
-      - name: Remove old container
-        run: docker rm weather-app || true
+      - name: Remove old container if exists
+        shell: powershell
+        run: |
+          if (docker ps -a --format "{{.Names}}" | Select-String "weather-app") {
+            docker rm weather-app
+          }
 
       - name: Run new container
+        shell: powershell
         run: |
-          docker run -d ^
-            --name weather-app ^
-            -p 5000:5000 ^
-            -e OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }} ^
+          docker run -d `
+            --name weather-app `
+            -p 5000:5000 `
+            -e OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }} `
             shagun1/web_weather:latest
