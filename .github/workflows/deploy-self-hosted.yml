@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - name: Pull latest Docker image
+        shell: powershell
         run: docker pull shagun1/web_weather:latest
 
       - name: Stop old container if exists
@@ -27,6 +28,12 @@ jobs:
           if (docker ps -a --format "{{.Names}}" | Select-String "weather-app") {
             docker rm weather-app
           }
+
+      - name: Free port 5000 (safety step)
+        shell: powershell
+        run: |
+          $pid = (netstat -ano | Select-String ":5000" | ForEach-Object { ($_ -split '\s+')[-1] } | Select-Object -First 1)
+          if ($pid) { taskkill /PID $pid /F }
 
       - name: Run new container
         shell: powershell
