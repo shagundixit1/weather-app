@@ -44,3 +44,5 @@ jobs:
             -e OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }} `
             shagun1/web_weather:latest
 # this is i am writing for the shake of testing the ci cd part
+
+# this is for testing
